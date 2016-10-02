@@ -1,0 +1,31 @@
+{
+  "name": "melon-skin",
+  "version": "0.0.1",
+  "description": "Web scraping platform runing on the web",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidaq/melon-skin.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davidaq/melon-skin/issues"
+  },
+  "homepage": "https://github.com/davidaq/melon-skin#readme",
+  "dependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babel-plugin-transform-class-properties": "^6.16.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.16.0",
+    "babel-plugin-transform-object-rest-spread": "^6.16.0",
+    "babel-register": "^6.16.3",
+    "cheerio": "^0.22.0",
+    "mongoose": "^4.6.2",
+    "phantom": "^2.1.21",
+    "redis": "^2.6.2",
+    "yaml-js": "^0.1.4"
+  }
+}
