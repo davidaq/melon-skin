@@ -1,6 +1,18 @@
 const path = require('path');
+const fs = require('fs');
+const webpack = require('webpack');
+const ExtractText = require("extract-text-webpack-plugin");
 
 const PRODUCTION = !!process.env.PRODUCTION;
+
+const babelrc = JSON.parse(fs.readFileSync('.babelrc'));
+
+babelrc.presets.push('react');
+babelrc.plugins.push(['import', {
+  "libraryName": "antd",
+  "libraryDirectory": "lib",
+  "style": 'css',
+}]);
 
 function gatewayPath(...args) {
   return path.join(__dirname, 'app', 'gateway', ...args);
@@ -19,7 +31,7 @@ module.exports = {
     publicPath: '/static/',
   },
   debug: !PRODUCTION,
-  devtool: 'cheap-module-eval-source-map',
+  devtool: PRODUCTION ? void(0) : 'cheap-module-eval-source-map',
   devServer: {
     port: 8081,
     contentBase: gatewayPath('fe'),
@@ -30,19 +42,44 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel',
-        query: {
+        query: Object.assign({}, babelrc, {
           cacheDirectory: true,
-        },
+          babelrc: false,
+        }),
       },
       {
         test: /\.styl$/,
-        loader: 'style!stylus',
+        loader: ExtractText.extract('style', 'stylus'),
       },
       {
         test: /\.css$/,
-        loader: 'style!css',
+        loader: ExtractText.extract('style', 'css'),
       },
     ],
   },
+  plugins: (PRODUCTION ? [
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      },
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: { warnings: false },
+      comments: false,
+      exclude: /node_modules/,
+    }),
+  ] : []).concat([
+    new webpack.NoErrorsPlugin(),
+    new webpack.ProgressPlugin((progress, msg) => {
+      const percentage = `${Math.floor(progress * 1000) / 10}%`;
+      const tabLen = 10 - percentage.length;
+      process.stdout.write(percentage);
+      for (let i = 0; i < tabLen; i++) {
+        process.stdout.write(' ');
+      }
+      process.stdout.write(`${msg}               \r`);
+    }),
+    new ExtractText('style.css'),
+  ]),
 };
 

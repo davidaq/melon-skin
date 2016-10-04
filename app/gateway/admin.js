@@ -4,11 +4,12 @@ import http from 'http';
 import { c2p } from '../util';
 
 async function send(ctx, fpath) {
-  if (false && DEBUG) {
+  if (DEBUG) {
     await c2p(cb => {
-      http.get(`http://127.0.0.1:8081/${fpath}`, res => {
+      http.get(`http://127.0.0.1:8081/static/${fpath}`, res => {
         ctx.status = res.statusCode;
         ctx.body = res;
+        cb();
       }).on('error', e => {
         ctx.status = 404;
         ctx.body = { error: 'Not Found' };
@@ -25,7 +26,7 @@ async function send(ctx, fpath) {
 export default router => {
 
   router.get('/static/*', async ctx => {
-    await send(ctx, ctx.url);
+    await send(ctx, ctx.params[0]);
   });
 
   router.get('/*', async ctx => {
