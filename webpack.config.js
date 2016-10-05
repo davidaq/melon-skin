@@ -22,7 +22,7 @@ module.exports = {
   context: gatewayPath('fe'),
   entry: {
     admin: [
-      './entry-admin',
+      './admin',
     ],
   },
   output: {
@@ -68,7 +68,11 @@ module.exports = {
       comments: false,
       exclude: /node_modules/,
     }),
-  ] : []).concat([
+  ] : [
+    new webpack.DefinePlugin({
+      DEBUG: true,
+    }),
+  ]).concat([
     new webpack.NoErrorsPlugin(),
     new webpack.ProgressPlugin((progress, msg) => {
       const percentage = `${Math.floor(progress * 1000) / 10}%`;
@@ -81,5 +85,11 @@ module.exports = {
     }),
     new ExtractText('style.css'),
   ]),
+  resolve: {
+    modulesDirectories: [
+      'node_modules',
+      path.relative(__dirname, gatewayPath('fe')),
+    ],
+  },
 };
 
