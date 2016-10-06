@@ -4,6 +4,7 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import store from './store';
+import './general.styl';
 
 import Navigation from './components/navigation';
 import NotFound from './components/not-found';

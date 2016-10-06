@@ -8,6 +8,7 @@ const PRODUCTION = !!process.env.PRODUCTION;
 const babelrc = JSON.parse(fs.readFileSync('.babelrc'));
 
 babelrc.presets.push('react');
+babelrc.presets.push('es2015');
 babelrc.plugins.push(['import', {
   "libraryName": "antd",
   "libraryDirectory": "lib",
@@ -22,6 +23,7 @@ module.exports = {
   context: gatewayPath('fe'),
   entry: {
     admin: [
+      'babel-polyfill',
       './admin',
     ],
   },
@@ -49,7 +51,7 @@ module.exports = {
       },
       {
         test: /\.styl$/,
-        loader: ExtractText.extract('style', 'stylus'),
+        loader: ExtractText.extract('style', 'css!stylus'),
       },
       {
         test: /\.css$/,

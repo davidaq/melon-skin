@@ -5,7 +5,7 @@ export default opts => {
   const {
     name = `unamed${++counter}`,
     initialState = {},
-    handlers = {}
+    actions = {}
   } = opts;
   if (DEBUG) {
     if (existing[name]) {
@@ -21,8 +21,8 @@ export default opts => {
     }
     return state;
   };
-  Object.keys(handlers).forEach(key => {
-    const handler = handlers[key];
+  Object.keys(actions).forEach(key => {
+    const handler = actions[key];
     if (typeof handler === 'function') {
       const resolvedKey = `${name}::${key}`;
       resolvedHandlers[resolvedKey] = handler;
