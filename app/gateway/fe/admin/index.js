@@ -11,10 +11,15 @@ import NotFound from './components/not-found';
 
 const history = syncHistoryWithStore(browserHistory, store);
 
+const Dummy = text => () => <div>{text}</div>;
+
 const index = (
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={Navigation}>
+        <IndexRoute component={Dummy('space list')} />
+        <Route path="space/create" component={Dummy('space create')} />
+        <Route path="space/port" component={Dummy('space port')} />
       </Route>
       <Route path="*" component={NotFound} />
     </Router>
