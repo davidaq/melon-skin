@@ -4,7 +4,7 @@ import path from 'path';
 import http from 'http';
 import fs from 'fs';
 import { c2p, hash } from '../util';
-import { hget, set, get, exists } from '../util/redis';
+import { hget, hset, set, get, exists } from '../util/redis';
 import svgCaptcha from 'svg-captcha';
 
 async function send(ctx, fpath) {
@@ -46,6 +46,21 @@ function api(fn) {
       }
     }
   };
+}
+
+async function auth(ctx, next) {
+  const token = ctx.cookies.get('token');
+  if (token) {
+    const key = `auth:${token}`;
+    const isAuthed = !!(await exists(key));
+    if (isAuthed) {
+      set(key, 'AUTH', 'EX', 3600);
+      await next();
+    } else {
+      ctx.status = 401;
+      ctx.body = '没有登录';
+    }
+  }
 }
 
 export default router => {
@@ -96,5 +111,14 @@ export default router => {
       throw '密码错误';
     }
     set(`auth:${token}`, 'AUTH', 'EX', 60);
+  }));
+
+  router.post('/change-password', auth, api(async ctx => {
+    const vals = await coBody.json(ctx);
+    const old = await hget('settings', 'admin:password');
+    if (old && hash(vals.old) !== old) {
+      throw '原始密码错误';
+    }
+    await hset('settings', 'admin:password', hash(vals.new));
   }));
 }

@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 import { Row, Col, Menu, Icon, Button } from 'antd';
@@ -30,47 +30,45 @@ class Navigation extends Component {
       return <Login {...other} />;
     }
     return (
-      <div className="navigation">
-        <Row>
-          <Col span="6">
-            <Menu
-              mode="inline"
-              defaultOpenKeys={['space', 'settings']}
-              onClick={this.onMenuClick}
-              selectedKeys={this.selectedKeys}
+      <section className="whole">
+        <section className="sidebar">
+          <Menu
+            mode="inline"
+            defaultOpenKeys={['space', 'settings']}
+            onClick={this.onMenuClick}
+            selectedKeys={this.selectedKeys}
+          >
+            <Menu.SubMenu
+              key="space"
+              title={<span><Icon type="appstore" />空间</span>}
             >
-              <Menu.SubMenu
-                key="space"
-                title={<span><Icon type="appstore" />空间</span>}
-              >
-                <Menu.Item key="/">
-                  空间列表
-                </Menu.Item>
-                <Menu.Item key="/space/create">
-                  创建空间
-                </Menu.Item>
-                <Menu.Item key="/space/port">
-                  导入与导出
-                </Menu.Item>
-              </Menu.SubMenu>
-              <Menu.SubMenu
-                key="settings"
-                title={<span><Icon type="setting" />设置</span>}
-              >
-                <Menu.Item key="/settings/sys">
-                  系统设置
-                </Menu.Item>
-                <Menu.Item key="/settings/auth">
-                  登录设置
-                </Menu.Item>
-              </Menu.SubMenu>
-            </Menu>
-          </Col>
-          <Col span="6">
-            {children}
-          </Col>
-        </Row>
-      </div>
+              <Menu.Item key="/">
+                空间列表
+              </Menu.Item>
+              <Menu.Item key="/space/create">
+                创建空间
+              </Menu.Item>
+              <Menu.Item key="/space/port">
+                导入与导出
+              </Menu.Item>
+            </Menu.SubMenu>
+            <Menu.SubMenu
+              key="settings"
+              title={<span><Icon type="setting" />设置</span>}
+            >
+              <Menu.Item key="/settings/sys">
+                系统设置
+              </Menu.Item>
+              <Menu.Item key="/settings/auth">
+                登录设置
+              </Menu.Item>
+            </Menu.SubMenu>
+          </Menu>
+        </section>
+        <section className="main">
+          {children}
+        </section>
+      </section>
     );
   }
 }

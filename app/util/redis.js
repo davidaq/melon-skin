@@ -8,6 +8,7 @@ export function connect(uri) {
 }
 
 export const hget = (...args) => c2p(cb => R.hget(...args, cb));
+export const hset = (...args) => c2p(cb => R.hset(...args, cb));
 
 export const set = (...args) => c2p(cb => R.set(...args, cb));
 export const get = (...args) => c2p(cb => R.get(...args, cb));

@@ -8,3 +8,21 @@ section.login
   left: 0
   right: 0
   margin: auto
+
+section.whole
+  height: 100%
+
+$sidebar-width = 150px
+
+section.sidebar
+  position: fixed
+  left: 0
+  top: 0
+  bottom: 0
+  width: $sidebar-width
+  & > .ant-menu
+    height: 100%
+  
+section.main
+  margin-left: $sidebar-width
+  padding: 5px 10px

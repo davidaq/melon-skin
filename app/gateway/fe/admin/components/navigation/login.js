@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { notification, Row, Col, Button, Input, Form } from 'antd';
+import { Row, Col, Button, Input, Form } from 'antd';
 import callapi from 'utils/callapi';
 import auth from 'admin/reducers/auth';
 
@@ -20,9 +20,9 @@ class Login extends Component {
         return;
       }
       const result = await callapi('/login').send(vals)
-        .toastError({ title: '登录错误' });
+        .toastError({ title: '登录错误' })
+        .toastSuccess({ title: '登录成功' });
       if (result.ok) {
-        notification.success({ message: '登录成功' });
         dispatch(auth.setAuthorized({ value: true }));
       } else {
         this.setState({

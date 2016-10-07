@@ -5,6 +5,7 @@ class Call {
     this.url = url;
     this.payload = null;
     this.willToastError = false;
+    this.willToastSuccess = false;
   }
 
   send(payload) {
@@ -14,6 +15,11 @@ class Call {
 
   toastError(option = {}) {
     this.willToastError = option;
+    return this;
+  }
+
+  toastSuccess(option = {}) {
+    this.willToastSuccess = option;
     return this;
   }
 
@@ -27,9 +33,17 @@ class Call {
       body: JSON.stringify(this.payload),
     });
     if (resp.status === 200) {
+      if (this.willToastSuccess) {
+        notification.success({
+          message: this.willToastSuccess.title || '操作成功',
+          description: this.willToastSuccess.content,
+        });
+      }
       return resolve(await resp.json());
-    } else if (resp.status === 406) {
-      const msg = await resp.text();
+    } else if (resp.status === 401) {
+      location.reload();
+    } else {
+      const msg = resp.status === 406 ? (await resp.text()) : '网络或服务器内部问题';
       if (this.willToastError) {
         notification[this.willToastError.type || 'error']({
           message: this.willToastError.title || '出错啦',
@@ -44,4 +58,4 @@ class Call {
 
 export default function(url) {
   return new Call(url);
-}
+};
