@@ -3,9 +3,10 @@ import coBody from 'co-body';
 import path from 'path';
 import http from 'http';
 import fs from 'fs';
-import { c2p, hash } from '../util';
-import { hget, hset, set, get, exists } from '../util/redis';
+import { c2p, hash } from '../../util';
+import { hget, hset, set, get, exists } from '../../util/redis';
 import svgCaptcha from 'svg-captcha';
+import * as apis from './api';
 
 async function send(ctx, fpath) {
   if (DEBUG) {
@@ -22,7 +23,7 @@ async function send(ctx, fpath) {
     });
   } else {
     return koaSend(ctx, fpath, {
-      root: path.join(__dirname, 'fe-dist'),
+      root: path.join(__dirname, '..', 'fe-dist'),
     });
   }
 }
@@ -65,7 +66,7 @@ async function auth(ctx, next) {
 
 export default router => {
 
-  const html = fs.readFileSync(path.join(__dirname, 'admin.html'), 'utf-8');
+  const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf-8');
 
   router.get('/captcha', async ctx => {
     const randomText = svgCaptcha.randomText({
@@ -108,17 +109,15 @@ export default router => {
     }
     const password = await hget('settings', 'admin:password');
     if (password && hash(body.password) !== password) {
-      throw '密码错误';
+      throw '口令错误';
     }
-    set(`auth:${token}`, 'AUTH', 'EX', 60);
+    set(`auth:${token}`, 'AUTH', 'EX', 3600);
   }));
 
-  router.post('/change-password', auth, api(async ctx => {
-    const vals = await coBody.json(ctx);
-    const old = await hget('settings', 'admin:password');
-    if (old && hash(vals.old) !== old) {
-      throw '原始密码错误';
-    }
-    await hset('settings', 'admin:password', hash(vals.new));
-  }));
+  Object.keys(apis).forEach(key => {
+    router.post(`/api/${key}`, auth, api(async ctx => {
+      const vals = await coBody.json(ctx);
+      return await apis[key](vals);
+    }));
+  });
 }

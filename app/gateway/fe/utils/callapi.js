@@ -2,7 +2,11 @@ import { notification } from 'antd';
 
 class Call {
   constructor(url) {
-    this.url = url;
+    if (/^\//.test(url)) {
+      this.url = url;
+    } else {
+      this.url = `/api/${url}`;
+    }
     this.payload = null;
     this.willToastError = false;
     this.willToastSuccess = false;
@@ -30,7 +34,7 @@ class Call {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: JSON.stringify(this.payload),
+      body: JSON.stringify(this.payload || {}),
     });
     if (resp.status === 200) {
       if (this.willToastSuccess) {

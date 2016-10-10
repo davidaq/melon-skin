@@ -19,6 +19,17 @@ export const general = [
     ],
   },
   {
+    key: 'robot',
+    title: '机器人',
+    icon: 'code-o',
+    children: [
+      {
+        key: '/robot/list',
+        title: '机器人列表',
+      },
+    ],
+  },
+  {
     key: 'settings',
     title: '设置',
     icon: 'setting',

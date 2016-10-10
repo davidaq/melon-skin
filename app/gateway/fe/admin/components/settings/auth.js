@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Row, Col, Form, Input, Button, Icon, Progress } from 'antd';
 import callapi from 'utils/callapi';
 import PageBlock from 'admin/components/utils/page-block';
@@ -16,7 +15,7 @@ class AuthSettings extends Component {
   }
 
   onSave(vals) {
-    return callapi('/change-password').send(vals)
+    return callapi('changePassword').send(vals)
       .toastError({ title: '保存失败' })
       .toastSuccess({ title: '保存成功' });
   }
@@ -83,7 +82,10 @@ class AuthSettings extends Component {
                   style={{ marginTop: 12 }}
                   showInfo={false}
                   percent={this.state.passwordStrength}
-                  status={['exception', '', 'success'][Math.floor(this.state.passwordStrength / 40)]}
+                  status={
+                    ['exception', 'normal', 'success']
+                    [Math.floor(this.state.passwordStrength / 40)]
+                  }
                 />
               </Form.Item>
             </Col>
@@ -115,6 +117,4 @@ class AuthSettings extends Component {
   }
 }
 
-export default connect(state => ({
-  ...state,
-}))(Form.create({})(AuthSettings));
+export default Form.create({})(AuthSettings);

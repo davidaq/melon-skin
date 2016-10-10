@@ -10,6 +10,8 @@ import './general.styl';
 import Navigation from './components/navigation';
 import NotFound from './components/not-found';
 import AuthSettings from './components/settings/auth';
+import SysSettings from './components/settings/sys';
+import RobotList from './components/robot/list';
 
 const history = syncHistoryWithStore(browserHistory, store);
 
@@ -24,6 +26,10 @@ const index = (
         <Route path="space/port" component={Dummy('space port')} />
         <Route path="settings">
           <Route path="auth" component={AuthSettings} />
+          <Route path="sys" component={SysSettings} />
+        </Route>
+        <Route path="robot">
+          <Route path="list" component={RobotList} />
         </Route>
       </Route>
       <Route path="*" component={NotFound} />

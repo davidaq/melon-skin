@@ -36,7 +36,7 @@ class PageBlock extends Component {
   }
 
   render() {
-    const { children, title, onSave, ...other } = this.props;
+    const { buttons, onButtonClick, children, title, onSave, ...other } = this.props;
     const isForm = typeof onSave === 'function';
     let Tag;
     if (isForm) {
@@ -46,17 +46,29 @@ class PageBlock extends Component {
     } else {
       Tag = 'div';
     }
+    const showTitle = isForm || title || (Array.isArray(buttons) && buttons.length > 0);
     return (
       <Tag {...other} className="page-block">
-        {isForm || title ? (
+        {showTitle ? (
           <div className="page-block-title">
             <h3>{title}</h3>
-            {isForm ? (
-              <Button type="primary" htmlType="submit" disabled={this.state.loading}>
-                <Icon type={this.state.loading ? 'loading' : 'save'} />
-                保存
-              </Button>
-            ) : null}
+            <div className="buttons">
+              {buttons.map((name, i) =>
+                <Button
+                  key={i}
+                  htmlType="button"
+                  onClick={() => onButtonClick && onButtonClick(i)}
+                >
+                  {name}
+                </Button>
+              )}
+              {isForm ? (
+                <Button type="primary" htmlType="submit" disabled={this.state.loading}>
+                  <Icon type={this.state.loading ? 'loading' : 'save'} />
+                  保存
+                </Button>
+              ) : null}
+            </div>
           </div>
         ) : null}
         <div className="page-block-content">
