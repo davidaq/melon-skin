@@ -1,25 +1,16 @@
-import createReducer from 'utils/create-reducer';
+import { Component } from 'redux-composer';
 import callapi from 'utils/callapi';
 
-export default createReducer({
-  name: 'auth',
-  initialState: {
-    authorized: window.isAuthed,
-  },
-  reduce(state, type, data) {
-    switch (type) {
-      case 'setAuthorized':
-        return {
-          ...state,
-          authorized: data,
-        };
-      default:
-        return state;
-    }
-  },
+const initialState = {
+  authorized: window.isAuthed,
+};
+
+class Auth extends Component {
+
   setAuthorized(value = true) {
     return !!value;
-  },
+  }
+
   login(vals) {
     return async dispatch => {
       const result = await callapi('/login').send(vals)
@@ -32,5 +23,19 @@ export default createReducer({
         return false;
       }
     };
-  },
-});
+  }
+
+  reduce(state = initialState, type, data) {
+    switch (type) {
+      case 'setAuthorized':
+        return {
+          ...state,
+          authorized: data,
+        };
+      default:
+        return super.reduce(state, type, data);
+    }
+  }
+}
+
+export default new Auth;
