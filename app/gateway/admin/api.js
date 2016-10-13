@@ -1,5 +1,5 @@
 import { hget, hgetall, hset, set, get, exists } from '../../util/redis';
-import { c2p, hash } from '../../util';
+import { sleep, c2p, hash } from '../../util';
 
 export async function changePassword(vals) {
   const old = await hget('settings', 'admin:password');
@@ -34,6 +34,7 @@ export async function setSysSettings(vals) {
 }
 
 export async function listRobots() {
+  await sleep(300);
   const list = (await hgetall('robot-info')) || {};
   const names = (await hgetall('robot-name')) || {};
   return await Promise.all(Object.keys(list).map(async key => {
@@ -43,4 +44,8 @@ export async function listRobots() {
     item.uuid = key;
     return item;
   }));
+}
+
+export async function setRobotName({ uuid, name }) {
+  await hset('robot-name', uuid, name);
 }

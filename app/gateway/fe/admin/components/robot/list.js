@@ -1,21 +1,19 @@
 import React, { Component } from 'react';
-import callapi from 'utils/callapi';
+import { connect } from 'react-redux';
 import PageBlock from 'admin/components/utils/page-block';
-import { Table, Tooltip, Tag } from 'antd';
+import prompt from 'admin/components/utils/prompt';
+import { Button, Table, Icon, Tooltip, Tag } from 'antd';
+import robots from 'admin/reducers/robots';
 
 class RobotList extends Component {
 
   componentWillMount() {
     this.onButtonClick = this.onButtonClick.bind(this);
-    this.state = {
-      robots: [],
-    };
-    this.refresh();
+    this.props.dispatch(robots.ensure());
   }
 
-  async refresh() {
-    const robots = await callapi('listRobots');
-    this.setState({ robots });
+  refresh() {
+    this.props.dispatch(robots.fetchList());
   }
 
   onButtonClick(index) {
@@ -24,17 +22,40 @@ class RobotList extends Component {
     }
   }
 
+  async onEditName(record, index) {
+    const name = await prompt('新的机器人名称', record.name);
+    if (name) {
+      this.props.dispatch(robots.setName(name.value, index));
+    }
+  }
+
   render() {
+    const { loading, list } = this.props;
     return (
       <div>
-        <PageBlock title="机器人列表" buttons={['刷新']} onButtonClick={this.onButtonClick}>
+        <PageBlock
+          title="机器人列表"
+          buttons={[
+            <span><Icon type={loading ? 'loading' : 'reload'} /> 刷新</span>,
+          ]}
+          onButtonClick={this.onButtonClick}
+        >
           <Table
+            pagination={false}
             columns={[
               {
                 title: '名称',
                 key: 'name',
-                render(text) {
-                  return text || <i>未命名</i>;
+                render: (text, record, index) => {
+                  return (
+                    <span>
+                      {text || <i>未命名</i>}
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                      <Button size="small" onClick={() => this.onEditName(record, index)}>
+                        <Icon type="edit" />
+                      </Button>
+                    </span>
+                  );
                 },
               },
               {
@@ -74,7 +95,7 @@ class RobotList extends Component {
                 },
               },
             ].map(v =>({ ...v, dataIndex: v.key }))}
-            dataSource={this.state.robots}
+            dataSource={list}
             rowKey={item => item.uuid}
           />
         </PageBlock>
@@ -83,4 +104,6 @@ class RobotList extends Component {
   }
 }
 
-export default RobotList;
+export default connect(state => ({
+  ...state.robots,
+}))(RobotList);

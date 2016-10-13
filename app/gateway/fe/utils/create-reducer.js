@@ -5,8 +5,10 @@ export default opts => {
   const {
     name = `unamed${++counter}`,
     initialState = {},
-    actions = {}
+    reduce = state => state,
+    ...actions,
   } = opts;
+  let currentState = initialState;
   if (DEBUG) {
     if (existing[name]) {
       throw new Error(`Reducers with duplicate name [${name}] not allowed`);
@@ -15,22 +17,37 @@ export default opts => {
   }
   const resolvedHandlers = {};
   const reducer = (state = initialState, action) => {
-    const handler = resolvedHandlers[action.type];
-    if (typeof handler === 'function') {
-      return handler(state, action, initialState);
+    let ret = state;
+    if (typeof resolvedHandlers[action.type] === 'function') {
+      ret = reduce(state, action.originalType, action.data);
     }
-    return state;
+    currentState = ret;
+    return ret;
   };
-  Object.keys(actions).forEach(key => {
-    const handler = actions[key];
-    if (typeof handler === 'function') {
+  if (actions) {
+    Object.keys(actions).forEach(key => {
+      const handler = actions[key];
+      if (typeof handler !== 'function') {
+        return;
+      }
       const resolvedKey = `${name}::${key}`;
       resolvedHandlers[resolvedKey] = handler;
-      reducer[key] = args => ({
-        ...args,
-        type: resolvedKey,
-      });
-    }
-  });
+      reducer[key] = (...args) => {
+        reducer.state = currentState;
+        const result = handler.call(reducer, ...args);
+        if (typeof result === 'function') {
+          return result;
+        } else {
+          return {
+            data: result,
+            type: resolvedKey,
+            originalType: key,
+          };
+        }
+      };
+    });
+  }
   return reducer;
 };
+
+export const pass = val => val;

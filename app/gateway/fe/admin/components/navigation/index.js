@@ -84,5 +84,5 @@ class Navigation extends Component {
 }
 
 export default connect(state => ({
-  authorized: state.auth.get('authorized'),
+  authorized: state.auth.authorized,
 }))(Navigation);

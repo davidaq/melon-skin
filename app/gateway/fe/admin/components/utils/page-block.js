@@ -53,15 +53,16 @@ class PageBlock extends Component {
           <div className="page-block-title">
             <h3>{title}</h3>
             <div className="buttons">
-              {buttons.map((name, i) =>
+              {Array.isArray(buttons) ? buttons.map((name, i) =>
                 <Button
                   key={i}
+                  type="primary"
                   htmlType="button"
                   onClick={() => onButtonClick && onButtonClick(i)}
                 >
                   {name}
                 </Button>
-              )}
+              ) : null}
               {isForm ? (
                 <Button type="primary" htmlType="submit" disabled={this.state.loading}>
                   <Icon type={this.state.loading ? 'loading' : 'save'} />

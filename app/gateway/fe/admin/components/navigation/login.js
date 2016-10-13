@@ -19,15 +19,9 @@ class Login extends Component {
       if (errors) {
         return;
       }
-      const result = await callapi('/login').send(vals)
-        .toastError({ title: '登录错误' })
-        .toastSuccess({ title: '登录成功' });
-      if (result.ok) {
-        dispatch(auth.setAuthorized({ value: true }));
-      } else {
-        this.setState({
-          captchaKey: Date.now(),
-        });
+      const success = await dispatch(auth.login(vals));
+      if (!success) {
+        this.setState({ captchaKey: Date.now() });
       }
     });
   }

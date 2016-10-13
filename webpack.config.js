@@ -33,7 +33,7 @@ module.exports = {
     publicPath: '/static/',
   },
   debug: !PRODUCTION,
-  devtool: PRODUCTION ? void(0) : 'cheap-module-eval-source-map',
+  devtool: PRODUCTION ? void(0) : '#inline-source-map',
   devServer: {
     port: 8081,
     contentBase: gatewayPath('fe'),
