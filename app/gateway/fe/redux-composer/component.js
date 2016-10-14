@@ -1,14 +1,14 @@
 import select from './select';
 
-let instCounter = 0;
-
 const defaultInitialState = {};
+
+let counter = 0;
 
 class Component {
 
   constructor() {
-    this.id = instCounter++;
-    this.path = [];
+    const name = typeof this.constructor === 'function' ? this.constructor.name : '-';
+    this['.composing-id'] = `#${++counter}#${name}`;
   }
 
   reduce(state = defaultInitialState) {
@@ -16,7 +16,7 @@ class Component {
   }
 
   actions(selector) {
-    return select(this, selector);
+    return select(this, selector, new Error());
   }
 }
 

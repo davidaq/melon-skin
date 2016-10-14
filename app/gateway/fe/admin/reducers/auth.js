@@ -8,7 +8,7 @@ const initialState = {
 class Auth extends Component {
 
   setAuthorized(value = true) {
-    return !!value;
+    return { type: 'SetAuthorized', value };
   }
 
   login(vals) {
@@ -25,15 +25,15 @@ class Auth extends Component {
     };
   }
 
-  reduce(state = initialState, type, data) {
-    switch (type) {
-      case 'setAuthorized':
+  reduce(state = initialState, action) {
+    switch (action.type) {
+      case 'SetAuthorized':
         return {
           ...state,
-          authorized: data,
+          authorized: action.value,
         };
       default:
-        return super.reduce(state, type, data);
+        return super.reduce(state, action);
     }
   }
 }

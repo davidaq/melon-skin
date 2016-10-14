@@ -5,15 +5,17 @@ import prompt from 'admin/components/utils/prompt';
 import { Button, Table, Icon, Tooltip, Tag } from 'antd';
 import robots from 'admin/reducers/robots';
 
+const { fetchList, ensure, setName } = robots.actions(R => R.robots.x);
+
 class RobotList extends Component {
 
   componentWillMount() {
     this.onButtonClick = this.onButtonClick.bind(this);
-    this.props.dispatch(robots.ensure());
+    this.props.dispatch(ensure());
   }
 
   refresh() {
-    this.props.dispatch(robots.fetchList());
+    this.props.dispatch(fetchList());
   }
 
   onButtonClick(index) {
@@ -25,7 +27,7 @@ class RobotList extends Component {
   async onEditName(record, index) {
     const name = await prompt('新的机器人名称', record.name);
     if (name) {
-      this.props.dispatch(robots.setName(name.value, index));
+      this.props.dispatch(setName(name.value, index));
     }
   }
 

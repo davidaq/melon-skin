@@ -6,6 +6,7 @@ import reducers from './reducers';
 
 const store = createStore(
   reducers,
+  window.devToolsExtension && window.devToolsExtension(),
   applyMiddleware(
     routerMiddleware(browserHistory),
     thunk
